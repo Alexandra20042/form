@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
     if ($result->num_rows > 0) {
         $product = $result->fetch_assoc();
         
-        // Получаем статистику по товару
         $stats_sql = "SELECT 
             COUNT(*) as total_reviews,
             AVG(CAST(rating AS UNSIGNED)) as avg_rating

@@ -1,11 +1,8 @@
 <?php
-// Подключаем конфигурационный файл
 require_once 'config.php';
 
-// Инициализируем массив для ошибок
 $errors = [];
 
-// Проверяем, была ли отправлена форма
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Получаем и очищаем данные из формы
@@ -16,23 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $review_text = trim($_POST['review_text'] ?? '');
     $rating = trim($_POST['rating'] ?? '');
 
-    // ВАЛИДАЦИЯ ДАННЫХ
-
-    // Проверка ID товара
+  
     if (empty($product_id)) {
         $errors[] = "Поле 'ID товара' обязательно для заполнения.";
     } elseif (!is_numeric($product_id) || $product_id < 1) {
         $errors[] = "ID товара должен быть положительным числом.";
     }
-
-    // Проверка названия товара
     if (empty($product_name)) {
         $errors[] = "Поле 'Название товара' обязательно для заполнения.";
     } elseif (strlen($product_name) > 105) {
         $errors[] = "Название товара не должно превышать 105 символов.";
     }
-
-    // Проверка имени рецензента
     if (empty($reviewer_name)) {
         $errors[] = "Поле 'Ваше имя' обязательно для заполнения.";
     } elseif (strlen($reviewer_name) > 25) {
@@ -40,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!preg_match('/^[a-zA-Zа-яА-ЯёЁ\s]+$/u', $reviewer_name)) {
         $errors[] = "Имя может содержать только буквы и пробелы.";
     }
-
-    // Проверка email
     if (empty($reviewer_email)) {
         $errors[] = "Поле 'Email' обязательно для заполнения.";
     } elseif (!filter_var($reviewer_email, FILTER_VALIDATE_EMAIL)) {
@@ -49,22 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($reviewer_email) > 50) {
         $errors[] = "Email не должен превышать 50 символов.";
     }
-
-    // Проверка текста отзыва
     if (empty($review_text)) {
         $errors[] = "Поле 'Текст отзыва' обязательно для заполнения.";
     } elseif (strlen($review_text) > 100) {
         $errors[] = "Текст отзыва не должен превышать 100 символов.";
     }
-
-    // Проверка оценки
     if (empty($rating)) {
         $errors[] = "Поле 'Оценка' обязательно для заполнения.";
     } elseif (!in_array($rating, ['1', '2', '3', '4', '5'])) {
         $errors[] = "Выберите корректную оценку от 1 до 5.";
     }
-
-    // Если есть ошибки - выводим их
     if (!empty($errors)) {
         http_response_code(400);
         echo "Ошибки валидации:\n";
@@ -74,17 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // ПОДКЛЮЧЕНИЕ К БАЗЕ ДАННЫХ И СОХРАНЕНИЕ
     try {
-        // Проверяем подключение
         if ($con->connect_error) {
             throw new Exception("Ошибка подключения к базе данных: " . $con->connect_error);
         }
         
-        // Устанавливаем кодировку
         $con->set_charset("utf8");
 
-        // Проверяем, существует ли товар с таким ID
         $check_sql = "SELECT product_name FROM product WHERE product_id = ? LIMIT 1";
         $check_stmt = $con->prepare($check_sql);
         $check_stmt->bind_param("i", $product_id);
@@ -92,11 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $check_result = $check_stmt->get_result();
         
         if ($check_result->num_rows > 0) {
-            // Товар существует - получаем его название
+           
             $existing_product = $check_result->fetch_assoc();
             $existing_name = $existing_product['product_name'];
             
-            // Если введенное название отличается от существующего
             if ($existing_name !== $product_name) {
                 http_response_code(400);
                 echo "Ошибка: Товар с ID $product_id уже существует!\n";
@@ -109,7 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $check_stmt->close();
 
-        // ПОДГОТОВЛЕННЫЕ ВЫРАЖЕНИЯ (защита от SQL-инъекций)
         $sql = "INSERT INTO product (product_id, product_name, reviewer_name, reviewer_email, review_text, rating) 
                 VALUES (?, ?, ?, ?, ?, ?)";
         
@@ -119,10 +96,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Ошибка подготовки запроса: " . $con->error);
         }
         
-        // Привязываем параметры
+    
         $stmt->bind_param("isssss", $product_id, $product_name, $reviewer_name, $reviewer_email, $review_text, $rating);
         
-        // Выполняем запрос
+    
         if ($stmt->execute()) {
             http_response_code(200);
             echo "Данные успешно сохранены!\n";
@@ -133,7 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Текст отзыва: $review_text\n";
             echo "Оценка: $rating/5";
             
-            // Показываем статистику по товару
             $stats_sql = "SELECT 
                 COUNT(*) as total_reviews,
                 AVG(CAST(rating AS UNSIGNED)) as avg_rating
@@ -155,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Ошибка выполнения запроса: " . $stmt->error);
         }
         
-        // Закрываем подготовленное выражение
+    
         $stmt->close();
         
     } catch (Exception $e) {
@@ -164,12 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
 } else {
-    // Если кто-то попытался напрямую открыть process.php
+
     http_response_code(405);
     echo "Метод не разрешен. Используйте POST запрос.";
     exit;
 }
 
-// Закрываем соединение с БД
 $con->close();
 ?>

@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
         $stats_result = $stats_stmt->get_result();
         $stats = $stats_result->fetch_assoc();
         
-        // Формируем текст как в оригинале
         $content = "Товар найден:\n";
         $content .= "ID: {$product['product_id']}\n";
         $content .= "Название: {$product['product_name']}\n";
@@ -50,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
         $reviews_stmt->close();
         $stats_stmt->close();
         
-        // HTML оформление
         echo "<!DOCTYPE html>
         <html lang='ru'>
         <head>
@@ -72,18 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
                     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 }
                 .content-box {
-                    background: #f8f9fa;
+                    background:
                     padding: 20px;
                     border-radius: 6px;
-                    border-left: 4px solid #90bbea;
+                    border-left: 4px solid
                     white-space: pre-line;
-                    color: #333;
+                    color:
                     line-height: 1.5;
                 }
                 .back-link {
                     display: inline-block;
                     padding: 12px 25px;
-                    background: #90bbea;
+                    background:
                     color: white;
                     text-decoration: none;
                     border-radius: 4px;
@@ -91,10 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
                     transition: background-color 0.3s;
                 }
                 .back-link:hover {
-                    background-color: #7aa8d8;
+                    background-color:
                 }
                 h2 {
-                    color: #333;
+                    color:
                     text-align: center;
                     margin-bottom: 20px;
                 }
@@ -102,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
         </head>
         <body>
             <div class='container'>
-                <h2>📦 Информация о товаре</h2>
+                <h2> Информация о товаре</h2>
                 <div class='content-box'>$content</div>
                 <div style='text-align: center;'>
                     <a href='form.html' class='back-link'>Добавить отзыв</a>
@@ -137,17 +135,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
                     text-align: center;
                 }
                 .error-box {
-                    background: #ffebee;
-                    color: #c62828;
+                    background:
+                    color:
                     padding: 15px;
                     border-radius: 6px;
                     margin-bottom: 20px;
-                    border-left: 4px solid #F44336;
+                    border-left: 4px solid
                 }
                 .back-link {
                     display: inline-block;
                     padding: 12px 25px;
-                    background: #90bbea;
+                    background:
                     color: white;
                     text-decoration: none;
                     border-radius: 4px;
@@ -155,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
                     transition: background-color 0.3s;
                 }
                 .back-link:hover {
-                    background-color: #7aa8d8;
+                    background-color:
                 }
             </style>
         </head>
@@ -198,17 +196,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
                 text-align: center;
             }
             .error-box {
-                background: #ffebee;
-                color: #c62828;
+                background:
+                color:
                 padding: 15px;
                 border-radius: 6px;
                 margin-bottom: 20px;
-                border-left: 4px solid #F44336;
+                border-left: 4px solid
             }
             .back-link {
                 display: inline-block;
                 padding: 12px 25px;
-                background: #90bbea;
+                background:
                 color: white;
                 text-decoration: none;
                 border-radius: 4px;
@@ -216,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
                 transition: background-color 0.3s;
             }
             .back-link:hover {
-                background-color: #7aa8d8;
+                background-color:
             }
         </style>
     </head>

@@ -129,7 +129,7 @@ $con->close();
 </head>
 <body>
     <div class='container'>
-        <h1>📝 Все отзывы о товарах</h1>
+        <h1> Все отзывы о товарах</h1>
 
         <div id='reviews-container'>
             <?php if ($result && $result->num_rows > 0): ?>
@@ -147,8 +147,8 @@ $con->close();
                             <span class='rating'><?php echo $stars . $empty_stars; ?> (<?php echo $row['rating']; ?>/5)</span>
                         </div>
                         <div class='reviewer-info'>
-                            <span>👤 <?php echo htmlspecialchars($row['reviewer_name']); ?></span>
-                            <span>📧 <?php echo htmlspecialchars($row['reviewer_email']); ?></span>
+                            <span> <?php echo htmlspecialchars($row['reviewer_name']); ?></span>
+                            <span> <?php echo htmlspecialchars($row['reviewer_email']); ?></span>
                         </div>
                         <div class='review-text'>
                             <?php echo htmlspecialchars($row['review_text']); ?>
@@ -170,8 +170,7 @@ $con->close();
 
         <div style='text-align: center; margin-top: 30px;'>
             <a href='form.html' class='back-link'>➕ Добавить новый отзыв</a>
-            <a href='index.php' class='back-link' style='background: #a5d6a7;'>🏠 На главную</a>
-            <a href='#' class='back-link' style='background: #ba68c8;' onclick="scrollToTop()">⬆️ Наверх</a>
+             <a href='#' class='back-link' style='background: #ba68c8;' onclick="scrollToTop()">⬆️ Наверх</a>
         </div>
     </div>
 

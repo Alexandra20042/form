@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+include 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
     $product_id = intval($_GET['product_id']);
@@ -24,13 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
         $stats_result = $stats_stmt->get_result();
         $stats = $stats_result->fetch_assoc();
         
-        echo "Товар найден:\n";
-        echo "ID: {$product['product_id']}\n";
-        echo "Название: {$product['product_name']}\n";
-        echo "Всего отзывов: {$stats['total_reviews']}\n";
-        echo "Средний рейтинг: " . round($stats['avg_rating'], 2) . "/5\n\n";
+        // Формируем текст как в оригинале
+        $content = "Товар найден:\n";
+        $content .= "ID: {$product['product_id']}\n";
+        $content .= "Название: {$product['product_name']}\n";
+        $content .= "Всего отзывов: {$stats['total_reviews']}\n";
+        $content .= "Средний рейтинг: " . round($stats['avg_rating'], 2) . "/5\n\n";
         
-        echo "Последние отзывы:\n";
+        $content .= "Последние отзывы:\n";
         $reviews_sql = "SELECT reviewer_name, rating, review_text 
                        FROM product 
                        WHERE product_id = ? 
@@ -43,18 +44,191 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id'])) {
         
         while ($review = $reviews_result->fetch_assoc()) {
             $stars = str_repeat('★', $review['rating']);
-            echo "- {$review['reviewer_name']}: {$stars} - {$review['review_text']}\n";
+            $content .= "- {$review['reviewer_name']}: {$stars} - {$review['review_text']}\n";
         }
         
         $reviews_stmt->close();
         $stats_stmt->close();
+        
+        // HTML оформление
+        echo "<!DOCTYPE html>
+        <html lang='ru'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Информация о товаре</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 600px;
+                    margin: 50px auto;
+                    padding: 20px;
+                    background-color: hsl(240, 34%, 86%);
+                }
+                .container {
+                    background: rgb(255, 255, 255);
+                    padding: 30px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                }
+                .content-box {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 6px;
+                    border-left: 4px solid #90bbea;
+                    white-space: pre-line;
+                    color: #333;
+                    line-height: 1.5;
+                }
+                .back-link {
+                    display: inline-block;
+                    padding: 12px 25px;
+                    background: #90bbea;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    margin: 10px 5px;
+                    transition: background-color 0.3s;
+                }
+                .back-link:hover {
+                    background-color: #7aa8d8;
+                }
+                h2 {
+                    color: #333;
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <h2>📦 Информация о товаре</h2>
+                <div class='content-box'>$content</div>
+                <div style='text-align: center;'>
+                    <a href='form.html' class='back-link'>Добавить отзыв</a>
+                    <a href='view_reviews.php' class='back-link' style='background: #ba68c8;'>Все отзывы</a>
+                   </div>
+            </div>
+        </body>
+        </html>";
+        
     } else {
-        echo "Товар с ID $product_id не найден.";
+        $errorText = "Товар с ID $product_id не найден.";
+        
+        echo "<!DOCTYPE html>
+        <html lang='ru'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Товар не найден</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 600px;
+                    margin: 100px auto;
+                    padding: 20px;
+                    background-color: hsl(240, 34%, 86%);
+                }
+                .container {
+                    background: rgb(255, 255, 255);
+                    padding: 40px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    text-align: center;
+                }
+                .error-box {
+                    background: #ffebee;
+                    color: #c62828;
+                    padding: 15px;
+                    border-radius: 6px;
+                    margin-bottom: 20px;
+                    border-left: 4px solid #F44336;
+                }
+                .back-link {
+                    display: inline-block;
+                    padding: 12px 25px;
+                    background: #90bbea;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    margin: 10px;
+                    transition: background-color 0.3s;
+                }
+                .back-link:hover {
+                    background-color: #7aa8d8;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='error-box'>$errorText</div>
+                <div>
+                    <a href='form.html' class='back-link'>Добавить отзыв</a>
+                    <a href='view_reviews.php' class='back-link'>Все отзывы</a>
+      </div>
+            </div>
+        </body>
+        </html>";
     }
     
     $stmt->close();
     $con->close();
 } else {
-    echo "Укажите product_id в параметрах GET запроса.";
+    $errorText = "Укажите product_id в параметрах GET запроса.";
+    
+    echo "<!DOCTYPE html>
+    <html lang='ru'>
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>Ошибка запроса</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 600px;
+                margin: 100px auto;
+                padding: 20px;
+                background-color: hsl(240, 34%, 86%);
+            }
+            .container {
+                background: rgb(255, 255, 255);
+                padding: 40px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+            .error-box {
+                background: #ffebee;
+                color: #c62828;
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                border-left: 4px solid #F44336;
+            }
+            .back-link {
+                display: inline-block;
+                padding: 12px 25px;
+                background: #90bbea;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 10px;
+                transition: background-color 0.3s;
+            }
+            .back-link:hover {
+                background-color: #7aa8d8;
+            }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='error-box'>$errorText</div>
+            <div>
+                <a href='form.html' class='back-link'>Добавить отзыв</a>
+                <a href='view_reviews.php' class='back-link'>Все отзывы</a>
+                 </div>
+        </div>
+    </body>
+    </html>";
 }
 ?>

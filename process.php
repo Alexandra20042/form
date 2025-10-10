@@ -276,8 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class='error-box'>Метод не разрешен. Используйте POST запрос.</div>
             <div>
                 <a href='form.html' class='back-link'>Перейти к форме</a>
-                <a href='index.php' class='back-link' style='background: #a5d6a7;'>На главную</a>
-            </div>
+               </div>
         </div>
     </body>
     </html>";

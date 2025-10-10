@@ -162,14 +162,14 @@ $con->close();
                 <?php endwhile; ?>
             <?php else: ?>
                 <div class='no-reviews'>
-                    <h3>😔 Отзывов пока нет</h3>
+                    <h3> Отзывов пока нет</h3>
                     <p>Будьте первым, кто оставит отзыв о товаре!</p>
                 </div>
             <?php endif; ?>
         </div>
 
         <div style='text-align: center; margin-top: 30px;'>
-            <a href='form.html' class='back-link'>➕ Добавить новый отзыв</a>
+            <a href='form.html' class='back-link'>Добавить новый отзыв</a>
              <a href='#' class='back-link' style='background: #ba68c8;' onclick="scrollToTop()">⬆️ Наверх</a>
         </div>
     </div>
